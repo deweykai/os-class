@@ -150,3 +150,4 @@ ifeq ($(CONFIG_X86_64),y)
 endif
 
 obj-y += helloworld.o
+obj-y += csci3753_add.o

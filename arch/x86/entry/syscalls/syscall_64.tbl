@@ -340,6 +340,7 @@
 331	common	pkey_free		sys_pkey_free
 332	common	statx			sys_statx
 333	64	kern_helloworld		sys_helloworld
+334	64	class_3764adder		sys_3753add
 
 #
 # x32-specific system call numbers start at 512 to avoid cache impact

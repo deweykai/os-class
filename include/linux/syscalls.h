@@ -942,5 +942,6 @@ asmlinkage long sys_statx(int dfd, const char __user *path, unsigned flags,
 			  unsigned mask, struct statx __user *buffer);
 
 asmlinkage long sys_helloworld(void);
+asmlinkage long sys_3753add(int a, int b, int *result);
 
 #endif
