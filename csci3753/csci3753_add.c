@@ -3,7 +3,10 @@
 #include <linux/uaccess.h>
 #include <linux/syscalls.h>
 
-asmlinkage long sys_3753add(int a, int b, int *result)
+SYSCALL_DEFINE3(csci_3753add,
+	int, a,
+	int, b,
+	int*, result)
 {
 	int c = a + b;
 	printk(KERN_INFO "calculating %d + %d = %d\n", a, b, c);
