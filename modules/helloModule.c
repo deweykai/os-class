@@ -3,6 +3,7 @@
 
 MODULE_AUTHOR("Kai Dewey");
 MODULE_LICENSE("GPL");
+MODULE_INFO(intree, "Y");
 
 int hello_init(void) {
     printk(KERN_ALERT "inside %s function\n",__FUNCTION__);
