@@ -4,22 +4,34 @@ def test_read():
 	f.write(test_data)
 	f.seek(0)
 	recv_data = f.read(len(test_data))
-	assert recv_data == test_data
 	f.close()
+	assert recv_data == test_data
 
 def test_seek_before():
 	f = open('/dev/pa2', 'rb+')
-	f.seek(-1)
+
+	p1 = f.tell()
+	try:
+		f.seek(-27)
+		raise OSError
+	except IOError:
+		pass
 	f.close()
 
 def test_seek_end():
 	f = open('/dev/pa2', 'rb+')
 	f.seek(-1, 2)
+	p = f.tell()
 	f.close()
+	assert p == 1023
 
 def test_seek_after():
 	f = open('/dev/pa2', 'rb+')
-	f.seek(1025)
+	try:
+		f.seek(1025)
+		raise OSError
+	except IOError:
+		pass
 	f.close()
 
 def test_write_lots():
@@ -40,9 +52,9 @@ def offset_read_write():
 	new_s = f.read(len(s))
 	assert s == new_s
 
-#test_read()
-#test_seek_before()
-#test_seek_end()
-#test_seek_after()
+test_read()
+test_seek_before()
+test_seek_end()
+test_seek_after()
 #test_write_lots() # gets stuck in loop
-#offset_read_write()
+offset_read_write()
