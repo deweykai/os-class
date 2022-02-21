@@ -38,7 +38,7 @@ static int __init pa2char_init(void)
 {
 	printk(KERN_INFO "PA2: hello\n");
 	module_buf = kmalloc(BUF_SIZE, GFP_KERNEL);
-	majorNumber = register_chrdev(0, DEV_NAME, &my_fops);
+	register_chrdev(240, DEV_NAME, &my_fops);
 	printk(KERN_INFO "PA2: major number %d\n", majorNumber);
 	open_count = 0;
 	close_count = 0;
@@ -49,7 +49,7 @@ static void __exit pa2char_exit(void)
 {
 	printk(KERN_INFO "PA2: goodbye\n");
 	kfree(module_buf);
-	unregister_chrdev(majorNumber, DEV_NAME);
+	unregister_chrdev(240, DEV_NAME);
 }
 
 
@@ -78,7 +78,7 @@ static int my_min(int a, int b) {
 static ssize_t my_read (struct file *file, char __user *buf, size_t count, loff_t *offset)
 {
 	int num_bytes = my_min(BUF_SIZE - *offset, count);
-	int err = copy_to_user(buf, module_buf, num_bytes);	
+	int err = copy_to_user(buf, module_buf + *offset, num_bytes);	
 	if (err != 0) {
 		return err;	
 	}
@@ -90,7 +90,7 @@ static ssize_t my_read (struct file *file, char __user *buf, size_t count, loff_
 static ssize_t my_write(struct file *file, const char __user *buf, size_t count, loff_t *offset)
 {
 	int num_bytes = my_min(BUF_SIZE - *offset, count);
-	int err = copy_from_user(module_buf, buf, num_bytes);
+	int err = copy_from_user(module_buf + *offset, buf, num_bytes);
 	if (err != 0) {
 		return -EFAULT;
 	}
@@ -101,13 +101,13 @@ static ssize_t my_write(struct file *file, const char __user *buf, size_t count,
 
 static loff_t my_seek(struct file *file, loff_t offset, int whence)
 {
-	loff_t new_pos = offset;
+	loff_t new_pos = 0;
 	switch (whence) {
 		case 0: // SEEK_SEt
 			new_pos = offset;
 			break;
 		case 1: // SEEK_CUR
-			new_pos += offset;
+			new_pos = file->f_pos + offset;
 			break;
 		case 2: // SEEK_END
 			new_pos = BUF_SIZE + offset;
@@ -116,6 +116,7 @@ static loff_t my_seek(struct file *file, loff_t offset, int whence)
 	if (new_pos < 0 || new_pos > BUF_SIZE) {
 		return -1;
 	} else {
+		file->f_pos = new_pos;
 		return new_pos;
 	}
 }
